@@ -24,7 +24,7 @@ static void runFile(const char *path /*路径*/)
    const char *lastSlash = strrchr(path, '/'); // 最后一次出现/字符的位置
    if (lastSlash != NULL)
    {
-      char a[] = {*lastSlash};
+      // char a[] = {*lastSlash};
       // printf("lastSlash: %ld\n",sizeof(a));
       // printf("lastSlash: %ld\n", strlen(lastSlash));
       // printf("path: %ld\n", strlen(path));

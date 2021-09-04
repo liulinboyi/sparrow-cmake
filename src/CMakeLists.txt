@@ -6,8 +6,8 @@ project(spr)
 #set(CMAKE_CXX_COMPILER "g++")
 
 #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
-set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -fgnu89-inline -g -O3 -W -Wall -DDEBUG")
-#set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -fgnu89-inline -g -O3 -W -Wall")
+#set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -fgnu89-inline -g -O3 -W -Wall -DDEBUG")
+set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -fgnu89-inline -g -O3 -W -Wall")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fgnu89-inline -g -O3 -W -Wall")
 
 message(STATUS "CMAKE_C_COMPILER = ${CMAKE_C_COMPILER}")
