@@ -1,0 +1,10 @@
+aux_source_directory(./ "PARSER")
+add_library(parser STATIC ${PARSER})
+
+# include_directories(../cli)
+# include_directories(../compiler)
+# include_directories(../gc)
+# include_directories(../include)
+# include_directories(../object)
+# include_directories(../parser)
+# include_directories(../vm)
