@@ -24,7 +24,7 @@ void *memManager(VM *vm, void *ptr, uint32_t oldSize, uint32_t newSize)
    //在分配内存时若达到了GC触发的阀值则启动垃圾回收
    if (newSize > 0 && vm->allocatedBytes > vm->config.nextGC)
    {
-      startGC(vm);
+      startGC(vm); // gc时会停止整个解析器，即垃圾回收时，整个程序不得不先暂停
    }
 
    return realloc(ptr, newSize);

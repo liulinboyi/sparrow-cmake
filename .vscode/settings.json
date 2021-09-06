@@ -58,6 +58,7 @@
         "memory_resource": "c",
         "optional": "c",
         "string_view": "c",
-        "numeric": "c"
+        "numeric": "c",
+        "cstdint": "cpp"
     }
 }

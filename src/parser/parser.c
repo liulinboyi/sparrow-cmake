@@ -94,7 +94,7 @@ static void skipBlanks(Parser *parser)
 //解析标识符
 static void parseId(Parser *parser, TokenType type)
 {
-   while (isalnum(parser->curChar) || parser->curChar == '_')
+   while (isalnum(parser->curChar)/*是字母或数字*/ || parser->curChar == '_')
    {
       getNextChar(parser);
    }
