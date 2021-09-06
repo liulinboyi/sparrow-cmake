@@ -8,7 +8,7 @@ project(spr)
 #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
 #set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -fgnu89-inline -g -O3 -W -Wall -DDEBUG")
 #set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -fgnu89-inline -g -O3 -W -Wall")
-set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -fgnu89-inline -g -W -Wall")
+set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -fgnu89-inline -g -W -Wall") # 不加-O3优化，否则不好单步调试
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fgnu89-inline -g -O3 -W -Wall")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fgnu89-inline -g -W -Wall")
 
