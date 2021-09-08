@@ -6,15 +6,15 @@
 #include "../vm/vm.h"
 #include "../compiler/compiler.h"
 
-DEFINE_BUFFER_METHOD(Method)
+DEFINE_BUFFER_METHOD(Method) // 定义Method缓冲区MethodBuffer相应的操作函数
 
 //判断a和b是否相等
 bool valueIsEqual(Value a, Value b)
 {
-   //类型不同则无须进行后面的比较
+   //类型不同则无须进行后面的比较 前提是类型相同
    if (a.type != b.type)
    {
-      return false;
+      return false; // 类型不同返回false
    }
 
    //同为数字,比较数值
@@ -39,8 +39,10 @@ bool valueIsEqual(Value a, Value b)
    //若对象同为字符串
    if (a.objHeader->type == OT_STRING)
    {
+      // 先转换为字符串
       ObjString *strA = VALUE_TO_OBJSTR(a);
       ObjString *strB = VALUE_TO_OBJSTR(b);
+      // 在再行比较，比较字符号串长度和字符串内容，防止误判
       return (strA->value.length == strB->value.length &&
               memcmp(strA->value.start, strB->value.start, strA->value.length) == 0);
    }
@@ -50,6 +52,7 @@ bool valueIsEqual(Value a, Value b)
    {
       ObjRange *rgA = VALUE_TO_OBJRANGE(a);
       ObjRange *rgB = VALUE_TO_OBJRANGE(b);
+      // 判断from和to是否相等
       return (rgA->from == rgB->from && rgA->to == rgB->to);
    }
 

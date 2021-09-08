@@ -28,7 +28,7 @@ typedef enum {
    value.objHeader = (ObjHeader*)(objPtr); \
    value; \
 })
-
+// 从Value到不同对象之间的转换
 #define VALUE_TO_OBJ(value) (value.objHeader)
 #define VALUE_TO_OBJSTR(value) ((ObjString*)VALUE_TO_OBJ(value))
 #define VALUE_TO_OBJFN(value) ((ObjFn*)VALUE_TO_OBJ(value))
