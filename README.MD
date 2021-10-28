@@ -24,5 +24,7 @@ make
 cmake -H"../src" -B"./" -DCMAKE_BUILD_TYPE=MinSizeRel -DUSE_32BITS=1
 ```
 
+# [发行 Release](https://github.com/liulinboyi/sparrow-cmake/releases/latest)
+
 规范：
 - 复合数据结构一律大写
