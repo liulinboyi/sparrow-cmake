@@ -40,25 +40,25 @@ static void runFile(const char *path /*路径*/)
 
    VM *vm = newVM();
    const char *sourceCode = readFile(path);
-   // executeModule(vm, OBJ_TO_VALUE(newObjString(vm, path, strlen(path))), sourceCode);
-   // freeVM(vm);
+   executeModule(vm, OBJ_TO_VALUE(newObjString(vm, path, strlen(path))), sourceCode);
+   freeVM(vm);
 
    // 测试parser
-   struct parser parser;
-   initParser(vm, &parser, path, sourceCode,NULL);
+   //   struct parser parser;
+   //   initParser(vm, &parser, path, sourceCode,NULL);
 
-   #include "../parser/token.list"
-   while (parser.curToken.type != TOKEN_EOF)
-   {
-      getNextToken(&parser);
-      printf("%dL: %s [", parser.curToken.lineNo, tokenArray[parser.curToken.type]);
-      uint32_t idx = 0;
-      while (idx < parser.curToken.length)
-      {
-         printf("%c", *(parser.curToken.start + idx++));
-      }
-      printf("]\n");
-   }
+   //   #include "../parser/token.list"
+   //   while (parser.curToken.type != TOKEN_EOF)
+   //   {
+   //      getNextToken(&parser);
+   //      printf("%dL: %s [", parser.curToken.lineNo, tokenArray[parser.curToken.type]);
+   //      uint32_t idx = 0;
+   //      while (idx < parser.curToken.length)
+   //      {
+   //         printf("%c", *(parser.curToken.start + idx++));
+   //      }
+   //      printf("]\n");
+   //   }
    // 测试parser
 }
 

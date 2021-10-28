@@ -90,6 +90,6 @@ typedef union {
 #define MIN_CAPACITY 64 // map对象 扩容时，会用到此值
 bool valueIsEqual(Value a, Value b);
 Class* newRawClass(VM* vm, const char* name, uint32_t fieldNum); 
-inline Class* getClassOfObj(VM* vm, Value * object, char * source);
+Class* getClassOfObj(VM* vm, Value * object, char * source);
 Class* newClass(VM* vm, ObjString* className, uint32_t fieldNum, Class* superClass);
 #endif

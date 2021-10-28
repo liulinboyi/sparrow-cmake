@@ -12,6 +12,16 @@ set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -fgnu89-inline -g -W -Wall") # 不加-O3�
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fgnu89-inline -g -O3 -W -Wall")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fgnu89-inline -g -W -Wall")
 
+if(USE_32BITS)
+    message(STATUS "using 32bits")
+    set(CMAKE_C_FLAGS "-m32")
+    set(CMAKE_CXX_FLAGS "-m32")
+else()
+    message(STATUS "using 64bits")
+    set(CMAKE_C_FLAGS "-m64")
+    set(CMAKE_CXX_FLAGS "-m64")
+endif(USE_32BITS)
+
 message(STATUS "CMAKE_C_COMPILER = ${CMAKE_C_COMPILER}")
 message(STATUS "CMAKE_CXX_COMPILER = ${CMAKE_CXX_COMPILER}")
 message(STATUS "CMAKE_AR = ${CMAKE_AR}")
