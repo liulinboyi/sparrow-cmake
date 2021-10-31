@@ -24,8 +24,8 @@ static uint32_t hashNum(double num) {
 static uint32_t hashObj(ObjHeader* objHeader) {
    switch (objHeader->type) {
       case OT_CLASS:  //计算class的哈希值
-	 return hashString(((Class*)objHeader)->name->value.start,
-	       ((Class*)objHeader)->name->value.length);
+	 return hashString(((Classes*)objHeader)->name->value.start,
+	       ((Classes*)objHeader)->name->value.length);
 	       
       case OT_RANGE: { //计算range对象哈希码
 	 ObjRange* objRange = (ObjRange*)objHeader;

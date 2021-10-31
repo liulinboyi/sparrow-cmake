@@ -5,6 +5,17 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "sp",
+            "request": "launch",
+            "name": "sp Launch",
+            "program": "${workspaceFolder}/${relativePath}",
+            "stopOnEntry": true,
+            "connectType": "sockets",
+            "serverPort": 13337,
+            "serverHost": "127.0.0.1",
+            "serverBase": ""
+        },
+        {
             "name": "gcc - 生成和调试活动文件",
             "type": "cppdbg",
             "request": "launch",

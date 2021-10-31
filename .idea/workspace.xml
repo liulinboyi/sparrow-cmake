@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
+    <generated>
+      <config projectName="spr" targetName="gc" />
+      <config projectName="spr" targetName="compiler" />
+      <config projectName="spr" targetName="debugserver" />
+      <config projectName="spr" targetName="vm" />
+      <config projectName="spr" targetName="spr" />
+      <config projectName="spr" targetName="parser" />
+      <config projectName="spr" targetName="cli" />
+      <config projectName="spr" targetName="include" />
+      <config projectName="spr" targetName="object" />
+    </generated>
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" ENABLED="true" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="857bf393-0114-4d6e-b6a1-de00bfc4895d" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/debugServer/debugserver.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/debugServer/debugserver.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/debugServer/tcplistener.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/debugServer/tcplistener.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vscode/launch.json" beforeDir="false" afterPath="$PROJECT_DIR$/.vscode/launch.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cli/cli.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/cli/cli.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/compiler/compiler.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/compiler/compiler.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/gc/gc.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/gc/gc.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/include/common.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/include/common.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/object/class.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/object/class.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/object/class.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/object/class.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/object/header_obj.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/object/header_obj.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/object/header_obj.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/object/header_obj.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/object/meta_obj.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/object/meta_obj.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/object/meta_obj.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/object/meta_obj.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/object/obj_map.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/object/obj_map.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/vm/core.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/vm/core.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/vm/core.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/vm/core.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/vm/vm.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/vm/vm.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/vm/vm.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/vm/vm.h" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="20E3xdjZg7ouTq0VcX00jyEFQc8" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="RunOnceActivity.cidr.known.project.marker" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="cf.first.check.clang-format" value="false" />
+    <property name="cidr.known.project.marker" value="true" />
+    <property name="cmake.loaded.for.project" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="RunManager" selected="CMake Application.spr">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="cli" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="spr" TARGET_NAME="cli" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="compiler" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="spr" TARGET_NAME="compiler" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="debugserver" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="spr" TARGET_NAME="debugserver" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="gc" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="spr" TARGET_NAME="gc" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="include" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="spr" TARGET_NAME="include" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="object" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="spr" TARGET_NAME="object" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="parser" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="spr" TARGET_NAME="parser" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="spr" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="spr" TARGET_NAME="spr" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="spr" RUN_TARGET_NAME="spr">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="vm" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="spr" TARGET_NAME="vm" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="CMake Application.cli" />
+      <item itemvalue="CMake Application.compiler" />
+      <item itemvalue="CMake Application.debugserver" />
+      <item itemvalue="CMake Application.gc" />
+      <item itemvalue="CMake Application.include" />
+      <item itemvalue="CMake Application.object" />
+      <item itemvalue="CMake Application.parser" />
+      <item itemvalue="CMake Application.spr" />
+      <item itemvalue="CMake Application.vm" />
+    </list>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="857bf393-0114-4d6e-b6a1-de00bfc4895d" name="Default Changelist" comment="" />
+      <created>1635596168093</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1635596168093</updated>
+      <workItem from="1635596169625" duration="1258000" />
+      <workItem from="1635597924850" duration="1969000" />
+      <workItem from="1635602692779" duration="3616000" />
+      <workItem from="1635640284706" duration="17720000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/debugServer/debugserver.c</url>
+          <line>178</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/debugServer/debugserver.c</url>
+          <line>186</line>
+          <option name="timeStamp" value="12" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/debugServer/debugserver.c</url>
+          <line>145</line>
+          <option name="timeStamp" value="14" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

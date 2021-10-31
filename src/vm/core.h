@@ -7,7 +7,7 @@ VMResult executeModule(VM* vm, Value moduleName, const char* moduleCode);
 int getIndexFromSymbolTable(SymbolTable* table, const char* symbol, uint32_t length);
 int addSymbol(VM* vm, SymbolTable* table, const char* symbol, uint32_t length);
 void buildCore(VM* vm);
-void bindMethod(VM* vm, Class* class, uint32_t index, Method method);
-void bindSuperClass(VM* vm, Class* subClass, Class* superClass);
+void bindMethod(VM* vm, Classes* classes, uint32_t index, Method method);
+void bindSuperClass(VM* vm, Classes* subClass, Classes* superClass);
 int ensureSymbolExist(VM* vm, SymbolTable* table, const char* symbol, uint32_t length);
 #endif

@@ -32,18 +32,18 @@ ObjModule *newObjModule(VM *vm, const char *modName /*模块名称*/)
 // class结构体是存储类的方法的结构
 // ObjInstance是存储对象域的结构
 //创建类class的实例 创建参数class的实例对象
-ObjInstance *newObjInstance(VM *vm, Class *class)
+ObjInstance *newObjInstance(VM *vm, Classes *classes)
 {
    //参数class主要作用是提供类中field的数目 通用数据要放在模板即class中
    ObjInstance *objInstance = ALLOCATE_EXTRA(vm,
-                                             ObjInstance, sizeof(Value) * class->fieldNum);
+                                             ObjInstance, sizeof(Value) * classes->fieldNum);
 
    //在此关联对象的类为参数class
-   initObjHeader(vm, &objInstance->objHeader, OT_INSTANCE, class/*创建的对象所属的类是此class，在这里将对象和类作了绑定*/); // 初始化对象头
+   initObjHeader(vm, &objInstance->objHeader, OT_INSTANCE, classes/*创建的对象所属的类是此class，在这里将对象和类作了绑定*/); // 初始化对象头
 
    //初始化field为NULL 初始化数组fields中元素的值为null
    uint32_t idx = 0;
-   while (idx < class->fieldNum)
+   while (idx < classes->fieldNum)
    {
       objInstance->fields[idx++] = VT_TO_VALUE(VT_NULL);
    }

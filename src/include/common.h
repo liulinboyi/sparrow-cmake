@@ -9,7 +9,7 @@
 
 typedef struct vm VM;
 typedef struct parser Parser;
-typedef struct class Class;
+typedef struct classes Classes;
 
 #define bool char
 #define true 1

@@ -60,25 +60,25 @@ bool valueIsEqual(Value a, Value b)
 }
 
 //新建一个裸类
-Class *newRawClass(VM *vm, const char *name, uint32_t fieldNum)
+Classes *newRawClass(VM *vm, const char *name, uint32_t fieldNum)
 {
-   Class *class = ALLOCATE(vm, Class);
+   Classes *classes = ALLOCATE(vm, Classes);
 
-   //裸类没有元类
-   initObjHeader(vm, &class->objHeader, OT_CLASS, NULL);
-   class->name = newObjString(vm, name, strlen(name));
-   class->fieldNum = fieldNum;
-   class->superClass = NULL; //默认没有基类
+   //裸类没有元ss类
+   initObjHeader(vm, &classes->objHeader, OT_CLASS, NULL);
+   classes->name = newObjString(vm, name, strlen(name));
+   classes->fieldNum = fieldNum;
+   classes->superClass = NULL; //默认没有基类
 
-   pushTmpRoot(vm, (ObjHeader *)class);
-   MethodBufferInit(&class->methods);
+   pushTmpRoot(vm, (ObjHeader *)classes);
+   MethodBufferInit(&classes->methods);
    popTmpRoot(vm);
 
-   return class;
+   return classes;
 }
 
 //创建一个类
-Class *newClass(VM *vm, ObjString *className, uint32_t fieldNum, Class *superClass)
+Classes *newClass(VM *vm, ObjString *className, uint32_t fieldNum, Classes *superClass)
 {
 //10表示strlen(" metaClass"
 #define MAX_METACLASS_LEN MAX_ID_LEN + 10
@@ -89,8 +89,8 @@ Class *newClass(VM *vm, ObjString *className, uint32_t fieldNum, Class *superCla
    memcpy(newClassName + className->value.length, " metaclass", 10);
 
    //先创建子类的meta类
-   Class *metaclass = newRawClass(vm, newClassName, 0);
-   metaclass->objHeader.class = vm->classOfClass;
+   Classes *metaclass = newRawClass(vm, newClassName, 0);
+   metaclass->objHeader.classes = vm->classOfClass;
 
    pushTmpRoot(vm, (ObjHeader *)metaclass);
    //绑定classOfClass为meta类的基类
@@ -100,20 +100,20 @@ Class *newClass(VM *vm, ObjString *className, uint32_t fieldNum, Class *superCla
    //最后再创建类
    memcpy(newClassName, className->value.start, className->value.length);
    newClassName[className->value.length] = '\0';
-   Class *class = newRawClass(vm, newClassName, fieldNum);
-   pushTmpRoot(vm, (ObjHeader *)class);
+   Classes *classes = newRawClass(vm, newClassName, fieldNum);
+   pushTmpRoot(vm, (ObjHeader *)classes);
 
-   class->objHeader.class = metaclass;
-   bindSuperClass(vm, class, superClass);
+   classes->objHeader.classes = metaclass;
+   bindSuperClass(vm, classes, superClass);
 
    popTmpRoot(vm); // metaclass
    popTmpRoot(vm); // class
 
-   return class;
+   return classes;
 }
 
 //数字等Value也被视为对象,因此参数为Value.获得对象obj所属的类
-inline Class *getClassOfObj(VM *vm, Value *object, char * source)
+inline Classes *getClassOfObj(VM *vm, Value *object, char * source)
 {
    // printf("%s\n", source);
    // printf("%d\n", object->type);
@@ -127,7 +127,7 @@ inline Class *getClassOfObj(VM *vm, Value *object, char * source)
    case VT_NUM:
       return vm->numClass;
    case VT_OBJ:
-      return object->objHeader->class;
+      return object->objHeader->classes;
    default:
       printf("%s\n", source);
       printf("%f\n", object->num);

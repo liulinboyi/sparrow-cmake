@@ -45,28 +45,28 @@ static void grayBuffer(VM* vm, ValueBuffer* buffer) {
 }
 
 //标黑class
-static void blackClass(VM* vm, Class* class) {
+static void blackClass(VM* vm, Classes* classes) {
    //标灰meta类
-   grayObject(vm, (ObjHeader*)class->objHeader.class);
+   grayObject(vm, (ObjHeader*)classes->objHeader.classes);
 
    //标灰父类
-   grayObject(vm, (ObjHeader*)class->superClass);
+   grayObject(vm, (ObjHeader*)classes->superClass);
 
    //标灰方法
    uint32_t idx = 0;
-   while (idx < class->methods.count) {
-      if (class->methods.datas[idx].type == MT_SCRIPT) {
-	 grayObject(vm, (ObjHeader*)class->methods.datas[idx].obj);
+   while (idx < classes->methods.count) {
+      if (classes->methods.datas[idx].type == MT_SCRIPT) {
+	 grayObject(vm, (ObjHeader*)classes->methods.datas[idx].obj);
       }
       idx++;
    }
 
    //标灰类名
-   grayObject(vm, (ObjHeader*)class->name);
+   grayObject(vm, (ObjHeader*)classes->name);
 
    //累计类大小
-   vm->allocatedBytes += sizeof(Class);
-   vm->allocatedBytes += sizeof(Method) * class->methods.capacity;
+   vm->allocatedBytes += sizeof(Classes);
+   vm->allocatedBytes += sizeof(Method) * classes->methods.capacity;
 }
 
 //标灰闭包
@@ -138,18 +138,18 @@ static void blackFn(VM* vm, ObjFn* fn) {
 //标黑objInstance
 static void blackInstance(VM* vm, ObjInstance* objInstance) {
    //标灰元类
-   grayObject(vm, (ObjHeader*)objInstance->objHeader.class);
+   grayObject(vm, (ObjHeader*)objInstance->objHeader.classes);
 
    //标灰实例中所有域,域的个数在class->fieldNum
    uint32_t idx = 0;
-   while (idx < objInstance->objHeader.class->fieldNum) {
+   while (idx < objInstance->objHeader.classes->fieldNum) {
       grayValue(vm, objInstance->fields[idx]);
       idx++;
    }
 
    //累计objInstance空间
    vm->allocatedBytes += sizeof(ObjInstance);
-   vm->allocatedBytes += sizeof(Value) * objInstance->objHeader.class->fieldNum;
+   vm->allocatedBytes += sizeof(Value) * objInstance->objHeader.classes->fieldNum;
 }
 
 //标黑objList
@@ -231,7 +231,7 @@ static void blackObject(VM* vm, ObjHeader* obj) {
 //根据对象类型分别标黑
    switch (obj->type) {
       case OT_CLASS:
-	 blackClass(vm, (Class*)obj);
+	 blackClass(vm, (Classes*)obj);
 	 break;
        
       case OT_CLOSURE:
@@ -297,7 +297,7 @@ void freeObject(VM* vm, ObjHeader* obj) {
 //根据对象类型分别处理
    switch (obj->type) { 
       case OT_CLASS:
-	 MethodBufferClear(vm, &((Class*)obj)->methods);
+	 MethodBufferClear(vm, &((Classes*)obj)->methods);
 	 break;
 
       case OT_THREAD: {

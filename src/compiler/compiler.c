@@ -171,7 +171,7 @@ static int writeByte(CompileUnit* cu, int byte) {
 }
 
 //写入操作码
-static void writeOpCode(CompileUnit* cu, OpCode opCode) {
+static void writeOpCode(CompileUnit* cu, unsigned int opCode) {
    writeByte(cu, opCode);
    //累计需要的运行时空间大小
    cu->stackSlotNum += opCodeSlotsUsed[opCode];
@@ -198,7 +198,7 @@ static int writeOpCodeByteOperand(CompileUnit* cu, OpCode opCode, int operand) {
 }
 
 //写入操作数为2字节大小的指令
-static void writeOpCodeShortOperand(CompileUnit* cu, OpCode opCode, int operand) {
+static void writeOpCodeShortOperand(CompileUnit* cu, unsigned int opCode, int operand) {
    writeOpCode(cu, opCode);
    writeShortOperand(cu, operand);
 }
@@ -1395,7 +1395,7 @@ static void id(CompileUnit* cu, bool canAssign) {
 	 //先将行号做为该变量值去声明
 	 if (var.index == -1) {
 	    var.index = declareModuleVar(cu->curParser->vm, cu->curParser->curModule, 
-		  name.start, name.length, NUM_TO_VALUE(cu->curParser->curToken.lineNo)); 
+		  name.start, name.length, NUM_TO_VALUE(cu->curParser->curToken.lineNo));
 	 }
       }
       emitLoadOrStoreVariable(cu, canAssign, var);

@@ -1,4 +1,5 @@
-cmake_minimum_required(VERSION 2.8)
+#cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.19)
 project(spr)
 
 
@@ -8,19 +9,19 @@ project(spr)
 #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
 #set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -fgnu89-inline -g -O3 -W -Wall -DDEBUG")
 #set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -fgnu89-inline -g -O3 -W -Wall")
-set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -fgnu89-inline -g -W -Wall") # 不加-O3优化，否则不好单步调试
+set(CMAKE_C_FLAGS "-std=gnu99 -fgnu89-inline -g -W -Wall -fPIE") # 不加-O3优化，否则不好单步调试
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fgnu89-inline -g -O3 -W -Wall")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fgnu89-inline -g -W -Wall")
+set(CMAKE_CXX_FLAGS "-std=c++11 -fgnu89-inline -g -W -Wall -fPIE")
 
-if(USE_32BITS)
+if (USE_32BITS)
     message(STATUS "using 32bits")
-    set(CMAKE_C_FLAGS "-m32")
-    set(CMAKE_CXX_FLAGS "-m32")
-else()
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32")
+else ()
     message(STATUS "using 64bits")
-    set(CMAKE_C_FLAGS "-m64")
-    set(CMAKE_CXX_FLAGS "-m64")
-endif(USE_32BITS)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m64")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64")
+endif (USE_32BITS)
 
 message(STATUS "CMAKE_C_COMPILER = ${CMAKE_C_COMPILER}")
 message(STATUS "CMAKE_CXX_COMPILER = ${CMAKE_CXX_COMPILER}")
@@ -58,6 +59,7 @@ include_directories(./include)
 include_directories(./object)
 include_directories(./parser)
 include_directories(./vm)
+include_directories(./debugServer)
 
 
 aux_source_directory(./cli "CLI")
@@ -81,8 +83,11 @@ add_library(parser STATIC ${PARSER})
 aux_source_directory(./vm "VM")
 add_library(vm STATIC ${VM})
 
+aux_source_directory(./debugServer "Debugserver")
+add_library(debugserver STATIC ${Debugserver})
+
 # aux_source_directory(./cli "SPR")
-add_executable(${PROJECT_NAME} ${VM} ${PARSER} ${OBJECT} ${INCLUDE} ${GC} ${COMPLIER} ${CLI})
+add_executable(${PROJECT_NAME} ${VM} ${PARSER} ${OBJECT} ${INCLUDE} ${GC} ${COMPLIER} ${CLI} ${Debugserver})
 # target_link_libraries(object include cli compiler parser vm gc)
 
 target_link_libraries(${PROJECT_NAME} m)

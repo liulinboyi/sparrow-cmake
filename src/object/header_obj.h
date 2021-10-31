@@ -18,7 +18,7 @@ typedef enum {
 typedef struct objHeader {
    ObjType type;
    bool isDark;	   //对象是否可达
-   Class* class;   //指向对象本身所属的类 其类型是Class
+   Classes* classes;   //指向对象本身所属的类 其类型是Class
    struct objHeader* next;   //用于链接所有已分配对象 指向下一个创建的对象 所有对象的链接形成已分配对象链表
 } ObjHeader;	  //对象头,用于记录元信息和垃圾回收
 
@@ -44,5 +44,5 @@ typedef struct {
 
 DECLARE_BUFFER_TYPE(Value) // 生成valueBuffer定义，以及相应的方法
 
-void initObjHeader(VM* vm, ObjHeader* objHeader, ObjType objType, Class* class);
+void initObjHeader(VM* vm, ObjHeader* objHeader, ObjType objType, Classes* classes);
 #endif

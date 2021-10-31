@@ -601,8 +601,8 @@ static bool primObjectIs(VM *vm, Value *args)
       RUN_ERROR("argument must be class!");
    }
 
-   Class *thisClass = getClassOfObj(vm, args, "primObjectIs");
-   Class *baseClass = (Class *)(args[1].objHeader);
+   Classes *thisClass = getClassOfObj(vm, args, "primObjectIs");
+   Classes *baseClass = (Classes *)(args[1].objHeader);
 
    //有可能是多级继承,因此自下而上遍历基类链
    while (baseClass != NULL)
@@ -623,16 +623,16 @@ static bool primObjectIs(VM *vm, Value *args)
 //args[0].tostring: 返回args[0]所属class的名字
 static bool primObjectToString(VM *vm UNUSED, Value *args)
 {
-   Class *class = args[0].objHeader->class;
-   Value nameValue = OBJ_TO_VALUE(class->name);
+   Classes *classes = args[0].objHeader->classes;
+   Value nameValue = OBJ_TO_VALUE(classes->name);
    RET_VALUE(nameValue);
 }
 
 //args[0].type:返回对象args[0]的类
 static bool primObjectType(VM *vm, Value *args)
 {
-   Class *class = getClassOfObj(vm, args, "primObjectType");
-   RET_OBJ(class);
+   Classes *classes = getClassOfObj(vm, args, "primObjectType");
+   RET_OBJ(classes);
 }
 
 //args[0].name: 返回类名
@@ -644,10 +644,10 @@ static bool primClassName(VM *vm UNUSED, Value *args)
 //args[0].supertype: 返回args[0]的基类
 static bool primClassSupertype(VM *vm UNUSED, Value *args)
 {
-   Class *class = VALUE_TO_CLASS(args[0]);
-   if (class->superClass != NULL)
+   Classes *classes = VALUE_TO_CLASS(args[0]);
+   if (classes->superClass != NULL)
    {
-      RET_OBJ(class->superClass);
+      RET_OBJ(classes->superClass);
    }
    RET_VALUE(VT_TO_VALUE(VT_NULL));
 }
@@ -1987,29 +1987,29 @@ int ensureSymbolExist(VM *vm, SymbolTable *table, const char *symbol, uint32_t l
 }
 
 //定义类
-static Class *defineClass(VM *vm, ObjModule *objModule, const char *name)
+static Classes *defineClass(VM *vm, ObjModule *objModule, const char *name)
 {
    //1先创建类
-   Class *class = newRawClass(vm, name, 0);
+   Classes *classes = newRawClass(vm, name, 0);
 
    //2把类做为普通变量在模块中定义
-   defineModuleVar(vm, objModule, name, strlen(name), OBJ_TO_VALUE(class));
-   return class;
+   defineModuleVar(vm, objModule, name, strlen(name), OBJ_TO_VALUE(classes));
+   return classes;
 }
 
 //使class->methods[index]=method
-void bindMethod(VM *vm, Class *class, uint32_t index, Method method)
+void bindMethod(VM *vm, Classes *classes, uint32_t index, Method method)
 {
-   if (index >= class->methods.count)
+   if (index >= classes->methods.count)
    {
       Method emptyPad = {MT_NONE, {0}};
-      MethodBufferFillWrite(vm, &class->methods, emptyPad, index - class->methods.count + 1);
+      MethodBufferFillWrite(vm, &classes->methods, emptyPad, index - classes->methods.count + 1);
    }
-   class->methods.datas[index] = method;
+   classes->methods.datas[index] = method;
 }
 
 //绑定基类
-void bindSuperClass(VM *vm, Class *subClass, Class *superClass)
+void bindSuperClass(VM *vm, Classes *subClass, Classes *superClass)
 {
    subClass->superClass = superClass;
 
@@ -2066,7 +2066,7 @@ void buildCore(VM *vm)
    PRIM_METHOD_BIND(vm->classOfClass, "toString", primClassToString);
 
    //定义object类的元信息类objectMetaclass,它无须挂载到vm
-   Class *objectMetaclass = defineClass(vm, coreModule, "objectMeta");
+   Classes *objectMetaclass = defineClass(vm, coreModule, "objectMeta");
 
    //classOfClass类是所有meta类的meta类和基类
    bindSuperClass(vm, objectMetaclass, vm->classOfClass);
@@ -2075,9 +2075,9 @@ void buildCore(VM *vm)
    PRIM_METHOD_BIND(objectMetaclass, "same(_,_)", primObjectmetaSame);
 
    //绑定各自的meta类
-   vm->objectClass->objHeader.class = objectMetaclass;
-   objectMetaclass->objHeader.class = vm->classOfClass;
-   vm->classOfClass->objHeader.class = vm->classOfClass; //元信息类回路,meta类终点
+   vm->objectClass->objHeader.classes = objectMetaclass;
+   objectMetaclass->objHeader.classes = vm->classOfClass;
+   vm->classOfClass->objHeader.classes = vm->classOfClass; //元信息类回路,meta类终点
 
    //执行核心模块
    executeModule(vm, CORE_MODULE, coreModuleCode);
@@ -2091,12 +2091,12 @@ void buildCore(VM *vm)
    //将其挂载到vm->threadClass并补充原生方法
    vm->threadClass = VALUE_TO_CLASS(getCoreClassValue(coreModule, "Thread"));
    //以下是类方法
-   PRIM_METHOD_BIND(vm->threadClass->objHeader.class, "new(_)", primThreadNew);
-   PRIM_METHOD_BIND(vm->threadClass->objHeader.class, "abort(_)", primThreadAbort);
-   PRIM_METHOD_BIND(vm->threadClass->objHeader.class, "current", primThreadCurrent);
-   PRIM_METHOD_BIND(vm->threadClass->objHeader.class, "suspend()", primThreadSuspend);
-   PRIM_METHOD_BIND(vm->threadClass->objHeader.class, "yield(_)", primThreadYieldWithArg);
-   PRIM_METHOD_BIND(vm->threadClass->objHeader.class, "yield()", primThreadYieldWithoutArg);
+   PRIM_METHOD_BIND(vm->threadClass->objHeader.classes, "new(_)", primThreadNew);
+   PRIM_METHOD_BIND(vm->threadClass->objHeader.classes, "abort(_)", primThreadAbort);
+   PRIM_METHOD_BIND(vm->threadClass->objHeader.classes, "current", primThreadCurrent);
+   PRIM_METHOD_BIND(vm->threadClass->objHeader.classes, "suspend()", primThreadSuspend);
+   PRIM_METHOD_BIND(vm->threadClass->objHeader.classes, "yield(_)", primThreadYieldWithArg);
+   PRIM_METHOD_BIND(vm->threadClass->objHeader.classes, "yield()", primThreadYieldWithoutArg);
    //以下是实例方法
    PRIM_METHOD_BIND(vm->threadClass, "call()", primThreadCallWithoutArg);
    PRIM_METHOD_BIND(vm->threadClass, "call(_)", primThreadCallWithArg);
@@ -2104,7 +2104,7 @@ void buildCore(VM *vm)
 
    //绑定函数类
    vm->fnClass = VALUE_TO_CLASS(getCoreClassValue(coreModule, "Fn"));
-   PRIM_METHOD_BIND(vm->fnClass->objHeader.class, "new(_)", primFnNew);
+   PRIM_METHOD_BIND(vm->fnClass->objHeader.classes, "new(_)", primFnNew);
 
    //绑定call的重载方法
    bindFnOverloadCall(vm, "call()");
@@ -2133,8 +2133,8 @@ void buildCore(VM *vm)
    //绑定num类方法
    vm->numClass = VALUE_TO_CLASS(getCoreClassValue(coreModule, "Num"));
    //类方法
-   PRIM_METHOD_BIND(vm->numClass->objHeader.class, "fromString(_)", primNumFromString);
-   PRIM_METHOD_BIND(vm->numClass->objHeader.class, "pi", primNumPi);
+   PRIM_METHOD_BIND(vm->numClass->objHeader.classes, "fromString(_)", primNumFromString);
+   PRIM_METHOD_BIND(vm->numClass->objHeader.classes, "pi", primNumPi);
    //实例方法
    PRIM_METHOD_BIND(vm->numClass, "+(_)", primNumPlus);
    PRIM_METHOD_BIND(vm->numClass, "-(_)", primNumMinus);
@@ -2180,7 +2180,7 @@ void buildCore(VM *vm)
 
    //字符串类
    vm->stringClass = VALUE_TO_CLASS(getCoreClassValue(coreModule, "String"));
-   PRIM_METHOD_BIND(vm->stringClass->objHeader.class, "fromCodePoint(_)", primStringFromCodePoint);
+   PRIM_METHOD_BIND(vm->stringClass->objHeader.classes, "fromCodePoint(_)", primStringFromCodePoint);
    PRIM_METHOD_BIND(vm->stringClass, "+(_)", primStringPlus);
    PRIM_METHOD_BIND(vm->stringClass, "[_]", primStringSubscript);
    PRIM_METHOD_BIND(vm->stringClass, "byteAt_(_)", primStringByteAt);
@@ -2198,7 +2198,7 @@ void buildCore(VM *vm)
 
    //List类
    vm->listClass = VALUE_TO_CLASS(getCoreClassValue(coreModule, "List"));
-   PRIM_METHOD_BIND(vm->listClass->objHeader.class, "new()", primListNew);
+   PRIM_METHOD_BIND(vm->listClass->objHeader.classes, "new()", primListNew);
    PRIM_METHOD_BIND(vm->listClass, "[_]", primListSubscript);
    PRIM_METHOD_BIND(vm->listClass, "[_]=(_)", primListSubscriptSetter);
    PRIM_METHOD_BIND(vm->listClass, "add(_)", primListAdd);
@@ -2212,7 +2212,7 @@ void buildCore(VM *vm)
 
    //map类
    vm->mapClass = VALUE_TO_CLASS(getCoreClassValue(coreModule, "Map"));
-   PRIM_METHOD_BIND(vm->mapClass->objHeader.class, "new()", primMapNew);
+   PRIM_METHOD_BIND(vm->mapClass->objHeader.classes, "new()", primMapNew);
    PRIM_METHOD_BIND(vm->mapClass, "[_]", primMapSubscript);
    PRIM_METHOD_BIND(vm->mapClass, "[_]=(_)", primMapSubscriptSetter);
    PRIM_METHOD_BIND(vm->mapClass, "addCore_(_,_)", primMapAddCore);
@@ -2234,12 +2234,12 @@ void buildCore(VM *vm)
    PRIM_METHOD_BIND(vm->rangeClass, "iteratorValue(_)", primRangeIteratorValue);
 
    //system类
-   Class *systemClass = VALUE_TO_CLASS(getCoreClassValue(coreModule, "System"));
-   PRIM_METHOD_BIND(systemClass->objHeader.class, "clock", primSystemClock);
-   PRIM_METHOD_BIND(systemClass->objHeader.class, "gc()", primSystemGC);
-   PRIM_METHOD_BIND(systemClass->objHeader.class, "importModule(_)", primSystemImportModule);
-   PRIM_METHOD_BIND(systemClass->objHeader.class, "getModuleVariable(_,_)", primSystemGetModuleVariable);
-   PRIM_METHOD_BIND(systemClass->objHeader.class, "writeString_(_)", primSystemWriteString);
+   Classes *systemClass = VALUE_TO_CLASS(getCoreClassValue(coreModule, "System"));
+   PRIM_METHOD_BIND(systemClass->objHeader.classes, "clock", primSystemClock);
+   PRIM_METHOD_BIND(systemClass->objHeader.classes, "gc()", primSystemGC);
+   PRIM_METHOD_BIND(systemClass->objHeader.classes, "importModule(_)", primSystemImportModule);
+   PRIM_METHOD_BIND(systemClass->objHeader.classes, "getModuleVariable(_,_)", primSystemGetModuleVariable);
+   PRIM_METHOD_BIND(systemClass->objHeader.classes, "writeString_(_)", primSystemWriteString);
 
    //在核心自举过程中创建了很多ObjString对象,创建过程中需要调用initObjHeader初始化对象头,
    //使其class指向vm->stringClass.但那时的vm->stringClass尚未初始化,因此现在更正.
@@ -2248,7 +2248,7 @@ void buildCore(VM *vm)
    {
       if (objHeader->type == OT_STRING)
       {
-         objHeader->class = vm->stringClass;
+         objHeader->classes = vm->stringClass;
       }
       objHeader = objHeader->next;
    }

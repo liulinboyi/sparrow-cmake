@@ -39,7 +39,7 @@ typedef enum {
 #define VALUE_TO_OBJCLOSURE(value) ((ObjClosure*)VALUE_TO_OBJ(value))
 #define VALUE_TO_OBJTHREAD(value) ((ObjThread*)VALUE_TO_OBJ(value))
 #define VALUE_TO_OBJMODULE(value) ((ObjModule*)VALUE_TO_OBJ(value))
-#define VALUE_TO_CLASS(value) ((Class*)VALUE_TO_OBJ(value))
+#define VALUE_TO_CLASS(value) ((Classes*)VALUE_TO_OBJ(value))
 
 #define VALUE_IS_UNDEFINED(value) ((value).type == VT_UNDEFINED)
 #define VALUE_IS_NULL(value) ((value).type == VT_NULL)
@@ -72,9 +72,9 @@ typedef struct {
 DECLARE_BUFFER_TYPE(Method) // 声明MethodBuffer类型
 
 //类是对象的模板
-struct class {
+struct classes {
    ObjHeader objHeader; // 类也有自己的类，因此添加了objHeader
-   struct class* superClass; //父类 指向class的基类
+   struct classes* superClass; //父类 指向class的基类
    uint32_t fieldNum;	   //本类的字段数,包括基类的字段数 类中域的数量，此数量包括从基类继承的域
    MethodBuffer methods;   //本类的方法 存储类中的所有方法
    ObjString* name;   //类名 类型是字符串对象
@@ -89,7 +89,7 @@ typedef union {
 #define CAPACITY_GROW_FACTOR 4 // 作为map和list扩容时的系数
 #define MIN_CAPACITY 64 // map对象 扩容时，会用到此值
 bool valueIsEqual(Value a, Value b);
-Class* newRawClass(VM* vm, const char* name, uint32_t fieldNum); 
-Class* getClassOfObj(VM* vm, Value * object, char * source);
-Class* newClass(VM* vm, ObjString* className, uint32_t fieldNum, Class* superClass);
+Classes* newRawClass(VM* vm, const char* name, uint32_t fieldNum);
+Classes* getClassOfObj(VM* vm, Value * object, char * source);
+Classes* newClass(VM* vm, ObjString* className, uint32_t fieldNum, Classes* superClass);
 #endif

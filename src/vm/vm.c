@@ -202,7 +202,7 @@ static void validateSuperClass(VM* vm, Value classNameValue,
 	    classNameString->value.start);
    }
 
-   Class* superClass = VALUE_TO_CLASS(superClassValue);
+   Classes* superClass = VALUE_TO_CLASS(superClassValue);
 
   //基类不允许为内建类
    if (superClass == vm->stringClass ||
@@ -226,7 +226,7 @@ static void validateSuperClass(VM* vm, Value classNameValue,
 }
 
 //修正部分指令操作数
-static void patchOperand(Class* class, ObjFn* fn) {
+static void patchOperand(Classes* classes, ObjFn* fn) {
    int ip = 0; 
    OpCode opCode;
    while (true) {
@@ -238,7 +238,7 @@ static void patchOperand(Class* class, ObjFn* fn) {
 	 case OPCODE_LOAD_THIS_FIELD: 
 	 case OPCODE_STORE_THIS_FIELD: 
 	   //修正子类的field数目  参数是1字节
-	    fn->instrStream.datas[ip++] += class->superClass->fieldNum;
+	    fn->instrStream.datas[ip++] += classes->superClass->fieldNum;
 	    break;
 
 	 case OPCODE_SUPER0:
@@ -266,7 +266,7 @@ static void patchOperand(Class* class, ObjFn* fn) {
 	       (fn->instrStream.datas[ip] << 8) | fn->instrStream.datas[ip + 1];
 
 	    //回填在函数emitCallBySignature中的占位VT_TO_VALUE(VT_NULL)
-	    fn->constants.datas[superClassIdx] = OBJ_TO_VALUE(class->superClass);
+	    fn->constants.datas[superClassIdx] = OBJ_TO_VALUE(classes->superClass);
 
 	    ip += 2; //跳过2字节的基类索引
 
@@ -280,7 +280,7 @@ static void patchOperand(Class* class, ObjFn* fn) {
 	    uint32_t fnIdx = (fn->instrStream.datas[ip] << 8) | fn->instrStream.datas[ip + 1]; 
 
 	    //递归进入该函数的指令流,继续为其中的super和field修正操作数
-	    patchOperand(class, VALUE_TO_OBJFN(fn->constants.datas[fnIdx]));	    
+	    patchOperand(classes, VALUE_TO_OBJFN(fn->constants.datas[fnIdx]));
       
 	    //ip-1是操作码OPCODE_CREATE_CLOSURE,
 	    //闭包中的参数涉及到upvalue,调用getBytesOfOperands获得参数字节数
@@ -303,11 +303,11 @@ static void patchOperand(Class* class, ObjFn* fn) {
 
 //绑定方法和修正操作数
 static void bindMethodAndPatch(VM* vm, OpCode opCode, 
-      uint32_t methodIndex, Class* class, Value methodValue) {
+      uint32_t methodIndex, Classes* classes, Value methodValue) {
 
    //如果是静态方法,就将类指向meta类(使接收者为meta类)
    if (opCode == OPCODE_STATIC_METHOD) {
-      class = class->objHeader.class;
+      classes = classes->objHeader.classes;
    }
 
    Method method;
@@ -315,10 +315,10 @@ static void bindMethodAndPatch(VM* vm, OpCode opCode,
    method.obj = VALUE_TO_OBJCLOSURE(methodValue);
    
    //修正操作数
-   patchOperand(class, method.obj->fn);
+   patchOperand(classes, method.obj->fn);
 
    //修正过后,绑定method到class
-   bindMethod(vm, class, methodIndex, method);
+   bindMethod(vm, classes, methodIndex, method);
 }
 
 //执行指令
@@ -380,7 +380,7 @@ VMResult executeInstruction(VM* vm, register ObjThread* curThread) {
 	 ASSERT(VALUE_IS_OBJINSTANCE(stackStart[0]), "method receiver should be objInstance.");
 	 ObjInstance* objInstance = VALUE_TO_OBJINSTANCE(stackStart[0]);
 
-	 ASSERT(fieldIdx < objInstance->objHeader.class->fieldNum, "out of bounds field!");
+	 ASSERT(fieldIdx < objInstance->objHeader.classes->fieldNum, "out of bounds field!");
 	 PUSH(objInstance->fields[fieldIdx]);
 	 LOOP();
       }
@@ -419,7 +419,7 @@ VMResult executeInstruction(VM* vm, register ObjThread* curThread) {
       {
 	 int argNum, index;
 	 Value* args;
-	 Class* class;
+	 Classes* classes;
 	 Method* method; 
 
       CASE(CALL0):
@@ -450,7 +450,7 @@ VMResult executeInstruction(VM* vm, register ObjThread* curThread) {
 	 args = curThread->esp - argNum;
 
 	 //获得方法所在的类
-	 class = getClassOfObj(vm, args,"vm");
+	 classes = getClassOfObj(vm, args,"vm");
 	 goto invokeMethod;
 
       CASE(SUPER0): 
@@ -479,11 +479,11 @@ VMResult executeInstruction(VM* vm, register ObjThread* curThread) {
 	 args = curThread->esp - argNum;
 
 	 //在函数bindMethodAndPatch中实现的基类的绑定
-	 class = VALUE_TO_CLASS(fn->constants.datas[READ_SHORT()]);
+	 classes = VALUE_TO_CLASS(fn->constants.datas[READ_SHORT()]);
 
       invokeMethod:
-	  method = &class->methods.datas[index];
-	 if ((uint32_t)index > class->methods.count || 
+	  method = &classes->methods.datas[index];
+	 if ((uint32_t)index > classes->methods.count ||
 	       method->type == MT_NONE) {
 	    RUN_ERROR("method \"%s\" not found!", vm->allMethodNames.datas[index].str);
 	 }
@@ -581,7 +581,7 @@ VMResult executeInstruction(VM* vm, register ObjThread* curThread) {
 	 uint8_t fieldIdx = READ_BYTE();
 	 ASSERT(VALUE_IS_OBJINSTANCE(stackStart[0]), "receiver should be instance!");
 	 ObjInstance* objInstance = VALUE_TO_OBJINSTANCE(stackStart[0]); 
-	 ASSERT(fieldIdx < objInstance->objHeader.class->fieldNum, "out of bounds field!");
+	 ASSERT(fieldIdx < objInstance->objHeader.classes->fieldNum, "out of bounds field!");
 	 objInstance->fields[fieldIdx] = PEEK();
 	 LOOP();
       }
@@ -594,7 +594,7 @@ VMResult executeInstruction(VM* vm, register ObjThread* curThread) {
 	 Value receiver = POP();   //获取消息接收者
 	 ASSERT(VALUE_IS_OBJINSTANCE(receiver), "receiver should be instance!");
 	 ObjInstance* objInstance = VALUE_TO_OBJINSTANCE(receiver);
-	 ASSERT(fieldIdx < objInstance->objHeader.class->fieldNum, "out of bounds field!");
+	 ASSERT(fieldIdx < objInstance->objHeader.classes->fieldNum, "out of bounds field!");
 	 PUSH(objInstance->fields[fieldIdx]);
 	 LOOP();
       }      
@@ -607,7 +607,7 @@ VMResult executeInstruction(VM* vm, register ObjThread* curThread) {
 	 Value receiver = POP();   //获取消息接收者
 	 ASSERT(VALUE_IS_OBJINSTANCE(receiver), "receiver should be instance!");
 	 ObjInstance* objInstance = VALUE_TO_OBJINSTANCE(receiver);
-	 ASSERT(fieldIdx < objInstance->objHeader.class->fieldNum, "out of bounds field!");
+	 ASSERT(fieldIdx < objInstance->objHeader.classes->fieldNum, "out of bounds field!");
 	 objInstance->fields[fieldIdx] = PEEK();
 	 LOOP();
       }
@@ -789,11 +789,11 @@ VMResult executeInstruction(VM* vm, register ObjThread* curThread) {
 
 	 //校验基类合法性,若不合法则停止运行
 	 validateSuperClass(vm, className, fieldNum, superClass);
-	 Class* class = newClass(vm, VALUE_TO_OBJSTR(className),
+	 Classes* classes = newClass(vm, VALUE_TO_OBJSTR(className),
 	       fieldNum, VALUE_TO_CLASS(superClass));
 
 	 //类存储于栈底
-	 stackStart[0] = OBJ_TO_VALUE(class);
+	 stackStart[0] = OBJ_TO_VALUE(classes);
 
 	 LOOP();
       }
@@ -807,13 +807,13 @@ VMResult executeInstruction(VM* vm, register ObjThread* curThread) {
 	 uint32_t methodNameIndex = READ_SHORT();
 
 	 //从栈顶中获得待绑定的类
-	 Class* class = VALUE_TO_CLASS(PEEK());
+	 Classes* classes = VALUE_TO_CLASS(PEEK());
 
 	 //从次栈顶中获得待绑定的方法,
 	 //这是由OPCODE_CREATE_CLOSURE操作码生成后压到栈中的
 	 Value method = PEEK2();
 
-	 bindMethodAndPatch(vm, opCode, methodNameIndex, class, method);
+	 bindMethodAndPatch(vm, opCode, methodNameIndex, classes, method);
 	 
 	 DROP();
 	 DROP();

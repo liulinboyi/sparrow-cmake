@@ -25,5 +25,5 @@ typedef struct {
 } ObjInstance;	//对象实例
 
 ObjModule* newObjModule(VM* vm, const char* modName);
-ObjInstance* newObjInstance(VM* vm, Class* class);
+ObjInstance* newObjInstance(VM* vm, Classes* classes);
 #endif

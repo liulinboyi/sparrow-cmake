@@ -46,17 +46,17 @@ typedef struct {
 } Configuration;
 
 struct vm {
-   Class* classOfClass;
-   Class* objectClass;
-   Class* stringClass;
-   Class* mapClass;
-   Class* rangeClass;
-   Class* listClass;
-   Class* nullClass;
-   Class* boolClass;
-   Class* numClass;
-   Class* fnClass; // 后面的newObjFn会用到fnClass
-   Class* threadClass;
+   Classes* classOfClass;
+   Classes* objectClass;
+   Classes* stringClass;
+   Classes* mapClass;
+   Classes* rangeClass;
+   Classes* listClass;
+   Classes* nullClass;
+   Classes* boolClass;
+   Classes* numClass;
+   Classes* fnClass; // 后面的newObjFn会用到fnClass
+   Classes* threadClass;
 
    uint32_t allocatedBytes;  //累计已分配的内存量 由memManager使用
    ObjHeader* allObjects;  //所有已分配对象链表
