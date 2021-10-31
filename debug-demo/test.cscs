@@ -1,0 +1,4 @@
+ var a = 100;
+var b = 50;
+var c = a / b;
+System.print(c);

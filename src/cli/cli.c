@@ -78,14 +78,15 @@ static void runCli(void) {
 }
 
 int main(int argc, const char **argv) {
-    if (argc == 1) {
-        runCli();
-    } else {
-        runFile(argv[1]);
-    }
+   if (argc == 1) {
+       runCli();
+   } else {
+       runFile(argv[1]);
+   }
 
 
-//    server();
-//    runCli();
+// 解开注释并注释上面的判断语句则可以进行mock debug
+    // server();
+    // runCli();
     return 0;
 }

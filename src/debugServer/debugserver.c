@@ -130,65 +130,104 @@ struct Action {
     char *file;
     char *next;
     char *setbp;
+    char *bye;
 };
 
 struct Action action = {
         "file",
         "next",
         "setbp",
+        "bye",
 };
 
-void process(char *buffer, int client) {
+struct stat sb;
+struct Message *FIlebuffer;
+
+void process(char *buffer, int client, int serverSocket) {
     struct DArray *res = getCmd(buffer, '\n');
+    int line = 0;
+    if (FIlebuffer == NULL) {
+        FIlebuffer = (struct Message *) malloc(sizeof(struct Message) + sb.st_size * sizeof(int));
+    }
     for (int i = 0; i < res->n; i++) {
         char *aa = (char *) res->arr[i];
         printf("%s\n", aa);
         struct DArray *temp = getCmd(aa, '|');
         char *ac = (char *) temp->arr[0];
+
         if (*ac == *action.file) {
 //            printf("file");
             char *filename = (char *) temp->arr[1];
             FILE *in_file = fopen(filename, "r");
 
-            struct stat sb;
             stat(filename, &sb);
 
             char *file_contents = malloc(sb.st_size);
-            struct Message *buffer = (struct Message *) malloc(sizeof(struct Message) + sb.st_size * sizeof(int));
+
             int index = 0;
-            buffer->length = 0;
+            FIlebuffer->length = 0;
 
             while (fscanf(in_file, "%[^\n] ", file_contents) != EOF) {
                 printf("> %s\n", file_contents);
                 char *tempContent = malloc(strlen(file_contents) + 1);
                 memcpy(tempContent, file_contents, strlen(file_contents) + 1);
-                buffer->content[index] = (char *) tempContent;
-                buffer->length++;
+                FIlebuffer->content[index] = (char *) tempContent;
+                FIlebuffer->length++;
                 index++;
             }
 
             int Allsize = 0;
-            for (int j = 0; j < buffer->length; j++) {
-                printf("%s\n", buffer->content[j]);
-                Allsize += strlen(buffer->content[j]);
+            for (int j = 0; j < FIlebuffer->length; j++) {
+                printf("%s\n", FIlebuffer->content[j]);
+                Allsize += strlen(FIlebuffer->content[j]);
             }
 
             fclose(in_file);
 
-            char *allContent = malloc(Allsize + buffer->length + 1);
-            join(buffer, allContent);
+            char *allContent = malloc(Allsize + FIlebuffer->length + 1);
+            join(FIlebuffer, allContent);
             printf("%s\n", allContent);
-            char *na = "N/A";
+//            char *na = "N/A";
+            char *na = "";
             char *tempRes = malloc(strlen(na) + strlen(ac) + 2);
             memccpy(tempRes, ac, 0, strlen(ac));
             tempRes[strlen(ac)] = '\n';
             memccpy(tempRes + strlen(ac) + 1, na, 0, strlen(na));
             tempRes[strlen(ac) + strlen(na) + 1] = '\0';
             printf("%s\n", tempRes);
-            send(client, buffer, strlen(tempRes), 0); //服务端也向客户端发送消息
+            send(client, tempRes, strlen(tempRes), 0); //服务端也向客户端发送消息
 
         } else if (*ac == *action.setbp) {
 
+        } else if (*ac == *action.next) {
+            int contentLength = strlen((char *) FIlebuffer->content[line]);
+//            int filePathLength = strlen((char *) res->arr[1]);
+//            char *content = malloc(strlen(action.next) + filePathLength + 3);
+//            memccpy(content, action.next, 0, strlen(action.next));
+//
+//            content[strlen(action.next)] = '\n';
+//            memccpy(content + strlen(action.next) + 1, (char *) res->arr[1], 0, filePathLength);
+//
+//            content[strlen(action.next) + filePathLength + 1] = '\0';
+//            send(client, content, strlen(content), 0); //服务端也向客户端发送消息
+
+//            send(client, (char *) FIlebuffer->content[line], contentLength, 0); //服务端也向客户端发送消息
+//mock
+            char *res = "next\n"
+                        "/home/xiaoliu/spr/test-2.cscs\n"
+                        "1\n"
+                        "1\n"
+                        "\n"
+                        "2\n"
+                        "this:1:array:[]\n"
+                        "a:1:number:5\n"
+                        "1\n"
+                        "/home/xiaoliu/spr/test-2.cscs\n"
+                        "b = 200;";
+            send(client, res, strlen(res), 0);
+        } else if (*ac == *action.bye) {
+            close(serverSocket);
+            exit(1);
         }
     }
 }
@@ -269,54 +308,42 @@ int server() {
     }
 
     //循环 接收消息、发送消息
+
+    printf("监听端口: %d\n", SERVER_PORT);
+
+    //调用accept函数后，会进入阻塞状态
+    //accept返回一个套接字的文件描述符，这样服务器端便有两个套接字的文件描述符，
+    //serverSocket和client。
+    //serverSocket仍然继续在监听状态，client则负责接收和发送数据
+    //clientAddr是一个传出参数，accept返回时，传出客户端的地址和端口号
+    //addr_len是一个传入-传出参数，传入的是调用者提供的缓冲区的clientAddr的长度，以避免缓冲区溢出。
+    //传出的是客户端地址结构体的实际长度。
+    //出错返回-1
+
+    client = accept(serverSocket, (struct sockaddr *) &clientAddr, (socklen_t *) &addr_len);
+
+    if (client < 0) {
+        perror("accept");
+//            continue;
+    }
+
+    printf("等待消息...\n");
+
+    //inet_ntoa ip地址转换函数，将网络字节序IP转换为点分十进制IP
+    //表达式：char *inet_ntoa (struct in_addr);
+    printf("IP is %s\n", inet_ntoa(clientAddr.sin_addr)); //把来访问的客户端的IP地址打出来
+    printf("Port is %d\n", htons(clientAddr.sin_port));
+
     while (1) {
-        printf("监听端口: %d\n", SERVER_PORT);
 
-        //调用accept函数后，会进入阻塞状态
-        //accept返回一个套接字的文件描述符，这样服务器端便有两个套接字的文件描述符，
-        //serverSocket和client。
-        //serverSocket仍然继续在监听状态，client则负责接收和发送数据
-        //clientAddr是一个传出参数，accept返回时，传出客户端的地址和端口号
-        //addr_len是一个传入-传出参数，传入的是调用者提供的缓冲区的clientAddr的长度，以避免缓冲区溢出。
-        //传出的是客户端地址结构体的实际长度。
-        //出错返回-1
-
-        client = accept(serverSocket, (struct sockaddr *) &clientAddr, (socklen_t *) &addr_len);
-
-        if (client < 0) {
-            perror("accept");
-            continue;
-        }
-
-        printf("等待消息...\n");
-
-        //inet_ntoa ip地址转换函数，将网络字节序IP转换为点分十进制IP
-        //表达式：char *inet_ntoa (struct in_addr);
-        printf("IP is %s\n", inet_ntoa(clientAddr.sin_addr)); //把来访问的客户端的IP地址打出来
-        printf("Port is %d\n", htons(clientAddr.sin_port));
 //        read(client, buffer->content, 4096);
         sleep(1.5);
         recv(client, buffer->content, 4096, 0);
         printf("收到消息: %s\n", buffer->content);
-        process(buffer->content, client);
-//        while (1) {
-//            buffer[0] = '\0';
-//            iDataNum = recv(client, buffer, 1024, 0);
-//            if (iDataNum < 0) {
-//                //			perror("recv null");
-//                continue;
-//            }
-//            buffer[iDataNum] = '\0';
-//            if (strcmp(buffer, "quit") == 0) break;
-//            printf("收到消息: %s\n", buffer);
-//            printf("发送消息:");
-//            scanf("%s", buffer);
-//            send(client, buffer, strlen(buffer), 0); //服务端也向客户端发送消息
-//            if (strcmp(buffer, "quit") == 0) break; //输入quit停止服务端程序
-//        }
+        process(buffer->content, client, serverSocket);
     }
-    close(serverSocket);
-
-    return 0;
+//    close(serverSocket);
+//
+//    return 0;
 
 }
